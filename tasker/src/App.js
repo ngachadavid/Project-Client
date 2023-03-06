@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Project from "./Project";
+import './App.css';
+
 
 function App() {
   const [projectId, setProjectId] = useState(null);
   const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:9292/projects")
+      .then((response) => response.json())
+      .then((data) => setProjects(data));
+  }, []);
 
   const handleCreateProject = () => {
     fetch("http://localhost:9292/projects", {
@@ -37,17 +45,16 @@ function App() {
             <button onClick={() => setProjectId(project.id)}>
               {project.name}
             </button>
-            {projectId === project.id && (
-              <Project
-                id={projectId}
-                onDelete={handleDeleteProject}
-              />
-            )}
+            <button onClick={() => handleDeleteProject(project.id)}>
+              Delete Project
+            </button>
           </li>
         ))}
       </ul>
+      {projectId && <Project id={projectId} onDelete={handleDeleteProject} />}
     </div>
   );
 }
 
 export default App;
+
